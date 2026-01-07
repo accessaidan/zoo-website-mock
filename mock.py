@@ -11,7 +11,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True, nullable=False)
     send_email = db.Column(db.Boolean, default=True)
     phone_number = db.Column(db.String(20), unique=True, nullable=True)
-    order_id = db.Column(db.Integer, db.ForeignKey('orders.id'), nullable=True)
+    order_id = db.Column(db.Integer, db.ForeignKey('orders.order_id'), nullable=True)
 
 
 class Orders(db.Model):
@@ -22,9 +22,12 @@ class Orders(db.Model):
 
 class tickets(db.Model):
     ticket_id = db.Column(db.Integer, primary_key=True)
-    amount = db.Column(db.Float, nullable=False)
+    children = db.Column(db.Float, nullable=False)
+    adults = db.Column(db.Float, nullable=False)
     is_used = db.Column(db.Boolean, default=False)
     type = db.Column(db.String(50), nullable=False)
+    child_price = db.Column(db.Float, nullable=False)
+    adult_price = db.Column(db.Float, nullable=False)
 
 class payments(db.Model):
     payment_id = db.Column(db.String(50), primary_key=True)
