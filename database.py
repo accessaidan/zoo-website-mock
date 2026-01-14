@@ -9,8 +9,8 @@ db = SQLAlchemy()
 class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     send_email = db.Column(db.Boolean, default=True)
-    phone_number = db.Column(db.String(20), unique=True, nullable=True)
 
 
 class Orders(db.Model):

@@ -19,9 +19,6 @@ class RegistrationForm(FlaskForm):
         DataRequired(),
         EqualTo('password', message='Passwords must match.')
     ])
-    phone_number = StringField('Phone Number', validators=[
-        Regexp(r'^\+?1?\d{9,15}$', message='Enter a valid phone number.')
-    ])
     send_email = BooleanField('Receive promotional emails', default=True)
     submit = SubmitField('Register')
 

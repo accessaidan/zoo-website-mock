@@ -11,7 +11,8 @@ routes_blueprint = Blueprint('routes', __name__)
 
 @routes_blueprint.route('/')
 def index():
-    return  render_template('index.html')
+
+    return render_template('index.html')
 
 @routes_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
@@ -20,18 +21,16 @@ def register():
         existing_user = User.query.filter_by(email=form.email.data).first()
         
         if existing_user:
-            flash ('Email already registered. Please log in.', 'error')
             return render_template('register.html', form=form)
         new_user = User(
             email=form.email.data,
-            phone_number=form.phone_number.data,
+            password=form.password.data,
             send_email=form.send_email.data
         )
         db.session.add(new_user)
         db.session.commit()
-        flash('Registration successful! Please log in.', 'success')
-        return redirect(url_for('login'))
-    
+        return redirect(url_for('routes.login'))
+
     return render_template('register.html', form=form)
 
 @routes_blueprint.route('/login', methods=['GET', 'POST'])
