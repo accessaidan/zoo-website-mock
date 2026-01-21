@@ -2,7 +2,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
-# from flask_login import LoginManager
+
 # from flask import flash, redirect, url_for
 # from mock import db
 # from database import User

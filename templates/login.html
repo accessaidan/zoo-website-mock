@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    {{ render_form(form) }}
+</form>
+
+<h5>Don't have an account?</h5>
+<button onclick="window.location.href='/register'">Register</button>
+
+{% endblock %}
