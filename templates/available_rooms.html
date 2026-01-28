@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+
+<h2>Available Rooms</h2>
+{% if rooms %}
+    <div class="row">
+    {% for room in rooms %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h5 class="card-title">Room {{ room.number }}</h5>
+                    <p class="card-text">
+                        <strong>Type:</strong> {{ room.type }}<br>
+                        <strong>Capacity:</strong> {{ room.capacity }}<br>
+                        <strong>Price per Night:</strong> ${{ room.price_per_night }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    </div>
+{% else %}
+    <p>No available rooms found.</p>
+{% endif %}
+
+{% endblock %}

@@ -1,10 +1,12 @@
 from flask import Flask, render_template, Blueprint
 from flask_login import LoginManager, login_user
 from flask import flash, redirect, url_for
+import datetime
+from datetime import date
 
 
-from forms import RegistrationForm, LoginForm
-from database import User, db
+from forms import *
+from database import *
 
 
 
@@ -49,3 +51,20 @@ def login():
         else:
             flash('Invalid email or password.', 'error')
     return render_template('login.html', form=form)
+
+@routes_blueprint.route('/Roomsearch', methods=['GET', 'POST'])
+def Roomsearch():
+    form = RoomSearch()
+    if form.validate_on_submit():
+        check_in_date = datetime.datetime.strptime(form.check_in_date.data, '%d/%m/%Y').date()
+        check_out_date = datetime.datetime.strptime(form.check_out_date.data, '%d/%m/%Y').date()
+        adults = int(form.adults.data)
+        children = int(form.children.data)
+        needs = form.needs.data
+
+        available_rooms = rooms.query.filter(rooms.capacity >= (adults + children), rooms.availability == True).all()
+
+        return render_template('available_rooms.html', rooms=available_rooms, check_in_date=check_in_date, check_out_date=check_out_date, adults=adults, children=children, needs=needs)
+
+    return render_template('Roomsearch.html', form=form)
+

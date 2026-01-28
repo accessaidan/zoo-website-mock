@@ -31,3 +31,10 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 
+class RoomSearch(FlaskForm):
+    check_in_date = StringField('Check-in Date', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    check_out_date = StringField('Check-out Date', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    adults = StringField('Number of Adults', validators=[DataRequired()])
+    children = StringField('Number of Children', validators=[DataRequired()])
+    needs = StringField('Special Needs / Requests')
+    submit = SubmitField('find rooms')

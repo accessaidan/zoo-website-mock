@@ -6,6 +6,7 @@ from routes import routes_blueprint
 from database import User, db
 from flask_bootstrap import Bootstrap5
 from flask_login import LoginManager, login_user, UserMixin
+from database import *
 
 
 
@@ -28,6 +29,8 @@ def load_user(user_id):
 
 with app.app_context():
     db.create_all()
+    populate_rooms()
+    make_admins()
 
 
 app.register_blueprint(routes_blueprint)
