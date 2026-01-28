@@ -1,8 +1,9 @@
-from flask import Flask, render_template, Blueprint
-from flask_login import LoginManager, login_user
+from flask import Flask, render_template, Blueprint, request
+from flask_login import LoginManager, login_user, login_required, current_user
 from flask import flash, redirect, url_for
 import datetime
 from datetime import date
+import uuid
 
 
 from forms import *
@@ -53,6 +54,7 @@ def login():
     return render_template('login.html', form=form)
 
 @routes_blueprint.route('/Roomsearch', methods=['GET', 'POST'])
+@login_required
 def Roomsearch():
     form = RoomSearch()
     if form.validate_on_submit():
@@ -62,9 +64,40 @@ def Roomsearch():
         children = int(form.children.data)
         needs = form.needs.data
 
-        available_rooms = rooms.query.filter(rooms.capacity >= (adults + children), rooms.availability == True).all()
+        available_rooms = get_available_rooms(check_in_date, check_out_date, adults + children)
 
         return render_template('available_rooms.html', rooms=available_rooms, check_in_date=check_in_date, check_out_date=check_out_date, adults=adults, children=children, needs=needs)
 
     return render_template('Roomsearch.html', form=form)
 
+@routes_blueprint.route('/book_room', methods=['POST'])
+def book_room():
+    room_id = request.form.get('room_id')
+    check_in_date = datetime.datetime.strptime(request.form.get('check_in_date'), '%Y-%m-%d').date()
+    check_out_date = datetime.datetime.strptime(request.form.get('check_out_date'), '%Y-%m-%d').date()
+    adults = int(request.form.get('adults'))
+    children = int(request.form.get('children'))
+    needs = request.form.get('needs')
+
+    new_booking = hotel_bookings(
+        room_id=room_id,
+        booking_date=date.today(),
+        check_in_date=check_in_date,
+        check_out_date=check_out_date,
+        adults=adults,
+        children=children,
+        needs=needs
+    )
+
+
+
+    #db.session.add(new_booking)
+    #db.session.commit()
+    flash('Room booked successfully!', 'success')
+    return redirect(url_for('routes.index'))
+
+@routes_blueprint.route('/cart')
+@login_required
+def cart():
+
+    return render_template('cart.html', )

@@ -38,3 +38,4 @@ class RoomSearch(FlaskForm):
     children = StringField('Number of Children', validators=[DataRequired()])
     needs = StringField('Special Needs / Requests')
     submit = SubmitField('find rooms')
+
