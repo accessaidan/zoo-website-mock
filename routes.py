@@ -1,5 +1,5 @@
 from flask import Flask, render_template, Blueprint, request
-from flask_login import LoginManager, login_user, login_required, current_user
+from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from flask import flash, redirect, url_for
 import datetime
 from datetime import date
@@ -79,6 +79,7 @@ def book_room():
     children = int(request.form.get('children'))
     needs = request.form.get('needs')
 
+
     new_booking = hotel_bookings(
         room_id=room_id,
         booking_date=date.today(),
@@ -93,11 +94,26 @@ def book_room():
 
     #db.session.add(new_booking)
     #db.session.commit()
-    flash('Room booked successfully!', 'success')
-    return redirect(url_for('routes.index'))
+    return redirect(url_for('routes.payment', room = room_id, check_in_date = check_in_date, check_out_date = check_out_date, adults = adults, children = children, needs = needs))
 
-@routes_blueprint.route('/cart')
+@routes_blueprint.route('/payment/<int:booking_id>', methods=['GET', 'POST'])
 @login_required
-def cart():
+def payment(booking_id):
+    form = PaymentForm()
+    booking = hotel_bookings.query.get(booking_id)
+    if not booking:
+        flash('Booking not found.', 'error')
+        return redirect(url_for('routes.account'))
 
-    return render_template('cart.html', )
+@routes_blueprint.route('/account')
+@login_required
+def account():
+
+    return render_template('account.html', )
+
+@routes_blueprint.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for('routes.index'))

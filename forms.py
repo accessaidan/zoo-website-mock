@@ -1,7 +1,7 @@
 # from flask import render_template, Blueprint
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo
+from wtforms.validators import DataRequired, Email, Length, Regexp, EqualTo, ValidationError
 
 # from flask import flash, redirect, url_for
 # from mock import db
@@ -39,3 +39,16 @@ class RoomSearch(FlaskForm):
     needs = StringField('Special Needs / Requests')
     submit = SubmitField('find rooms')
 
+class PaymentForm(FlaskForm):
+    first_name = StringField('First Name', validators=[DataRequired()])
+    last_name = StringField('Last Name', validators=[DataRequired()])
+    card_number = StringField('Card Number', validators=[DataRequired(), Length(min=16, max=16)])
+    expiry_date = StringField('Expiry Date (MM/YY)', validators=[DataRequired(), Regexp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$', message='Invalid expiry date format.')])
+    cvv = StringField('CVV', validators=[DataRequired(), Length(min=3, max=4)])
+    submit = SubmitField('Pay Now')
+
+    def validate_card_number(self, field):
+        if not field.data.isdigit():
+            raise ValidationError('Card number must contain only digits.')
+        # Implement Luhn algorithm check here if needed
+    
