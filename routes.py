@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint, request
+from flask import Flask, render_template, Blueprint, request, session
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from flask import flash, redirect, url_for
 import datetime
@@ -80,30 +80,33 @@ def book_room():
     needs = request.form.get('needs')
 
 
-    new_booking = hotel_bookings(
-        room_id=room_id,
-        booking_date=date.today(),
-        check_in_date=check_in_date,
-        check_out_date=check_out_date,
-        adults=adults,
-        children=children,
-        needs=needs
-    )
+    session['pending_booking'] = {
+        'room_id': room_id,
+        'check_in_date': check_in_date,
+        'check_out_date': check_out_date,
+        'adults': adults,
+        'children': children,
+        'needs': needs
+    }
 
 
 
-    #db.session.add(new_booking)
-    #db.session.commit()
-    return redirect(url_for('routes.payment', room = room_id, check_in_date = check_in_date, check_out_date = check_out_date, adults = adults, children = children, needs = needs))
+    return redirect(url_for('routes.payment', booking=session['pending_booking']))
 
-@routes_blueprint.route('/payment/<int:booking_id>', methods=['GET', 'POST'])
+@routes_blueprint.route('/payment', methods=['GET', 'POST'])
 @login_required
-def payment(booking_id):
+def payment():
     form = PaymentForm()
-    booking = hotel_bookings.query.get(booking_id)
-    if not booking:
-        flash('Booking not found.', 'error')
-        return redirect(url_for('routes.account'))
+    if form.validate_on_submit():
+        # Process payment
+        flash('Payment successful!', 'success')
+
+
+        db.session.commit()
+        return redirect(url_for('routes.index'))
+
+
+    return render_template('payment.html', form=form)
 
 @routes_blueprint.route('/account')
 @login_required
