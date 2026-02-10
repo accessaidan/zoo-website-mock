@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint, request, session
+from flask import Flask, render_template, Blueprint, request
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from flask import flash, redirect, url_for
 import datetime
@@ -73,6 +73,7 @@ def Roomsearch():
 @routes_blueprint.route('/book_room', methods=['POST'])
 def book_room():
     room_id = request.form.get('room_id')
+    booking_date = date.today()
     check_in_date = datetime.datetime.strptime(request.form.get('check_in_date'), '%Y-%m-%d').date()
     check_out_date = datetime.datetime.strptime(request.form.get('check_out_date'), '%Y-%m-%d').date()
     adults = int(request.form.get('adults'))
@@ -80,33 +81,31 @@ def book_room():
     needs = request.form.get('needs')
 
 
-    session['pending_booking'] = {
-        'room_id': room_id,
-        'check_in_date': check_in_date,
-        'check_out_date': check_out_date,
-        'adults': adults,
-        'children': children,
-        'needs': needs
-    }
+    new_booking = hotel_bookings(
+        room_id=room_id,
+        booking_date=date.today(),
+        check_in_date=check_in_date,
+        check_out_date=check_out_date,
+        adults=adults,
+        children=children,
+        needs=needs
+    )
+    
 
 
-
-    return redirect(url_for('routes.payment', booking=session['pending_booking']))
+    #db.session.add(new_booking)
+    #db.session.commit()
+    return redirect(url_for('routes.payment', room = room_id, booking_date = booking_date, check_in_date = check_in_date, check_out_date = check_out_date, adults = adults, children = children, needs = needs))
 
 @routes_blueprint.route('/payment', methods=['GET', 'POST'])
 @login_required
 def payment():
     form = PaymentForm()
     if form.validate_on_submit():
-        # Process payment
-        flash('Payment successful!', 'success')
-
-
-        db.session.commit()
+        flash('Payment successful! Your booking is confirmed.', 'success')
         return redirect(url_for('routes.index'))
-
-
     return render_template('payment.html', form=form)
+
 
 @routes_blueprint.route('/account')
 @login_required

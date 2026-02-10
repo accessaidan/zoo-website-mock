@@ -50,5 +50,5 @@ class PaymentForm(FlaskForm):
     def validate_card_number(self, field):
         if not field.data.isdigit():
             raise ValidationError('Card number must contain only digits.')
-        # Implement Luhn algorithm check here if needed
+
     

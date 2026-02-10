@@ -5,44 +5,51 @@
 {% block content %}
 
 
-<div class="container mt-3">
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Booking Details</h5>
-                </div>
-                <div class="card-body">
-                    <p><strong>Room Number:</strong> {{ booking.room_number }}</p>
-                    <p><strong>Room Type:</strong> {{ booking.room_type }}</p>
-                    <p><strong>Check-in Date:</strong> {{ booking.check_in_date }}</p>
-                    <p><strong>Check-out Date:</strong> {{ booking.check_out_date }}</p>
-                    <p><strong>Adults:</strong> {{ booking.adults }}</p>
-                    <p><strong>Children:</strong> {{ booking.children }}</p>
-                    <p><strong>Special Needs:</strong> {{ booking.needs or "None" }}</p>
-                </div>
-            </div>
-        </div>
 
-    <div class="container mt-3">
+
+
+    <div class="container mt-2">
+
+    <div class="card mb-3">
+        <div class="card-header">
+            <h5 class="mb-0">Booking Summary</h5>
+        </div>
+        <div class="card-body">
+            <p><strong>Room:</strong> {{ room }}</p>
+            <p><strong>Date:</strong> {{ booking_date }}</p>
+            <p><strong>Arrival Date</strong> {{ check_in_date }}</p>
+            <p><strong>Departure Date</strong> {{  check_out_date }}</p>
+            <p><strong>Adults:</strong> {{ adults }}</p>
+            <p><strong>Children:</strong> {{ children }}</p>
+            <p><strong>Needs</strong> {{ needs }}</p>
+        </div>
+    </div>
+
+
+
+
+
+
         <h2>Payment Information</h2>
         <form method="POST" action="">
         {{ form.hidden_tag() }}
-        <div class="mb-2">
+        <div class="mb-3">
             {{ form.first_name.label(class="form-label") }}
             {{ form.first_name(class="form-control") }}
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             {{ form.last_name.label(class="form-label") }}
             {{ form.last_name(class="form-control") }}
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             {{ form.card_number.label(class="form-label") }}
             {{ form.card_number(class="form-control") }}
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             {{ form.expiry_date.label(class="form-label") }}
             {{ form.expiry_date(class="form-control") }}
         </div>
-        <div class="mb-2">
+        <div class="mb-3">
             {{ form.cvv.label(class="form-label") }}
             {{ form.cvv(class="form-control") }}
         </div>
