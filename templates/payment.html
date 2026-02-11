@@ -15,13 +15,14 @@
             <h5 class="mb-0">Booking Summary</h5>
         </div>
         <div class="card-body">
-            <p><strong>Room:</strong> {{ room }}</p>
-            <p><strong>Date:</strong> {{ booking_date }}</p>
-            <p><strong>Arrival Date</strong> {{ check_in_date }}</p>
-            <p><strong>Departure Date</strong> {{  check_out_date }}</p>
-            <p><strong>Adults:</strong> {{ adults }}</p>
-            <p><strong>Children:</strong> {{ children }}</p>
-            <p><strong>Needs</strong> {{ needs }}</p>
+            <p><strong>Room:</strong> {{ booking_details.room_num }}</p>
+            <p><strong>Booking Date:</strong> {{ booking_details.booking_date }}</p>
+            <p><strong>Arrival Date:</strong> {{ booking_details.check_in_date }}</p>
+            <p><strong>Departure Date:</strong> {{ booking_details.check_out_date }}</p>
+            <p><strong>Adults:</strong> {{ booking_details.adults }}</p>
+            <p><strong>Children:</strong> {{ booking_details.children }}</p>
+            <p><strong>Needs:</strong> {{ booking_details.needs }}</p>
+            <p><strong>Price:</strong> {{ booking_details.price }}</p>
         </div>
     </div>
 
@@ -34,12 +35,8 @@
         <form method="POST" action="">
         {{ form.hidden_tag() }}
         <div class="mb-3">
-            {{ form.first_name.label(class="form-label") }}
-            {{ form.first_name(class="form-control") }}
-        </div>
-        <div class="mb-3">
-            {{ form.last_name.label(class="form-label") }}
-            {{ form.last_name(class="form-control") }}
+            {{ form.full_name.label(class="form-label") }}
+            {{ form.full_name(class="form-control") }}
         </div>
         <div class="mb-3">
             {{ form.card_number.label(class="form-label") }}

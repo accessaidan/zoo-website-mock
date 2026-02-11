@@ -32,16 +32,15 @@ class LoginForm(FlaskForm):
 
 
 class RoomSearch(FlaskForm):
-    check_in_date = StringField('Check-in Date', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
-    check_out_date = StringField('Check-out Date', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    check_in_date = StringField('Check-in Date (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    check_out_date = StringField('Check-out Date (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
     adults = StringField('Number of Adults', validators=[DataRequired()])
     children = StringField('Number of Children', validators=[DataRequired()])
     needs = StringField('Special Needs / Requests')
-    submit = SubmitField('find rooms')
+    submit = SubmitField('Find Rooms')
 
 class PaymentForm(FlaskForm):
-    first_name = StringField('First Name', validators=[DataRequired()])
-    last_name = StringField('Last Name', validators=[DataRequired()])
+    full_name = StringField('Full Name', validators=[DataRequired()])
     card_number = StringField('Card Number', validators=[DataRequired(), Length(min=16, max=16)])
     expiry_date = StringField('Expiry Date (MM/YY)', validators=[DataRequired(), Regexp(r'^(0[1-9]|1[0-2])\/?([0-9]{2})$', message='Invalid expiry date format.')])
     cvv = StringField('CVV', validators=[DataRequired(), Length(min=3, max=4)])

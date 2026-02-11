@@ -33,19 +33,20 @@ class payments(db.Model):
     card_number = db.Column(db.String(20), nullable=False)
     card_holder_name = db.Column(db.String(100), nullable=False)
     expiry_date = db.Column(db.String(10), nullable=False)
-    save_card = db.Column(db.Boolean, default=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('hotel_bookings.booking_id'), nullable=False)
 
 class hotel_bookings(db.Model):
-    booking_id = db.Column(db.String(36), primary_key=True)
+    booking_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     room_id = db.Column(db.Integer, db.ForeignKey('rooms.room_id'), nullable=False)
-    booking_date = db.Column(db.Date, nullable=False)
-    check_in_date = db.Column(db.Date, nullable=False)
-    check_out_date = db.Column(db.Date, nullable=False)
+    room_number = db.Column(db.String(50), nullable=False)
+    booking_date = db.Column(db.String, nullable=False)
+    check_in_date = db.Column(db.String, nullable=False)
+    check_out_date = db.Column(db.String, nullable=False)
     adults = db.Column(db.Integer, nullable=False)
     children = db.Column(db.Integer, nullable=False)
     needs = db.Column(db.String(200), nullable=True)
-    status = db.Column(db.String(50), nullable=False, default='pending')
+    price = db.Column(db.Float, nullable=False)
 
 class rooms(db.Model):
     room_id = db.Column(db.Integer, primary_key=True)

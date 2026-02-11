@@ -1,4 +1,4 @@
-from flask import Flask, render_template, Blueprint, request
+from flask import Flask, render_template, Blueprint, request, session
 from flask_login import LoginManager, login_user, login_required, current_user, logout_user
 from flask import flash, redirect, url_for
 import datetime
@@ -57,9 +57,9 @@ def login():
 @login_required
 def Roomsearch():
     form = RoomSearch()
-    if form.validate_on_submit():
-        check_in_date = datetime.datetime.strptime(form.check_in_date.data, '%d/%m/%Y').date()
-        check_out_date = datetime.datetime.strptime(form.check_out_date.data, '%d/%m/%Y').date()
+    if request.method == 'POST':
+        check_in_date = datetime.datetime.strptime(form.check_in_date.data, '%Y-%m-%d').date()
+        check_out_date = datetime.datetime.strptime(form.check_out_date.data, '%Y-%m-%d').date()
         adults = int(form.adults.data)
         children = int(form.children.data)
         needs = form.needs.data
@@ -73,29 +73,29 @@ def Roomsearch():
 @routes_blueprint.route('/book_room', methods=['POST'])
 def book_room():
     room_id = request.form.get('room_id')
+    room_num = rooms.query.get(room_id).number
+    print(room_num)
     booking_date = date.today()
     check_in_date = datetime.datetime.strptime(request.form.get('check_in_date'), '%Y-%m-%d').date()
     check_out_date = datetime.datetime.strptime(request.form.get('check_out_date'), '%Y-%m-%d').date()
     adults = int(request.form.get('adults'))
     children = int(request.form.get('children'))
     needs = request.form.get('needs')
+    price = rooms.query.get(room_id).price_per_night * (check_out_date - check_in_date).days
 
-
-    new_booking = hotel_bookings(
-        room_id=room_id,
-        booking_date=date.today(),
-        check_in_date=check_in_date,
-        check_out_date=check_out_date,
-        adults=adults,
-        children=children,
-        needs=needs
-    )
-    
-
-
-    #db.session.add(new_booking)
-    #db.session.commit()
-    return redirect(url_for('routes.payment', room = room_id, booking_date = booking_date, check_in_date = check_in_date, check_out_date = check_out_date, adults = adults, children = children, needs = needs))
+    session['booking_details'] = {
+        'room_id': room_id,
+        'room_num': room_num,
+        'booking_date': booking_date.strftime('%Y-%m-%d'),
+        'check_in_date': check_in_date.strftime('%Y-%m-%d'),
+        'check_out_date': check_out_date.strftime('%Y-%m-%d'),
+        'adults': adults,
+        'children': children,
+        'needs': needs,
+        'price': price
+        
+    }
+    return redirect(url_for('routes.payment', booking_details=session['booking_details']))
 
 @routes_blueprint.route('/payment', methods=['GET', 'POST'])
 @login_required
@@ -103,15 +103,67 @@ def payment():
     form = PaymentForm()
     if form.validate_on_submit():
         flash('Payment successful! Your booking is confirmed.', 'success')
+
+        # Clear the session
+        new_booking = hotel_bookings(
+            user_id=current_user.user_id,
+            room_id=session['booking_details']['room_id'],
+            room_number=session['booking_details']['room_num'],
+            booking_date=session['booking_details']['booking_date'],
+            check_in_date=session['booking_details']['check_in_date'],
+            check_out_date=session['booking_details']['check_out_date'],
+            adults=session['booking_details']['adults'],
+            children=session['booking_details']['children'],
+            needs=session['booking_details']['needs'],
+            price=session['booking_details']['price']
+        )
+        db.session.add(new_booking)
+        db.session.commit()
+
+
+        card_number = form.card_number.data
+        card_holder_name = form.full_name.data
+        expiry_date = form.expiry_date.data
+        cvv = form.cvv.data
+
+        new_payment = payments(
+            card_number=card_number,
+            card_holder_name=card_holder_name,
+            expiry_date=expiry_date,
+            booking_id=new_booking.booking_id
+        )
+
+        db.session.add(new_payment)
+        db.session.commit()
+
+        session.pop('booking_details', None)
+
         return redirect(url_for('routes.index'))
-    return render_template('payment.html', form=form)
+    return render_template('payment.html', form=form, booking_details=session.get('booking_details'))
 
 
 @routes_blueprint.route('/account')
 @login_required
 def account():
+    email = current_user.email
+    user_bookings = hotel_bookings.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('account.html', bookings=user_bookings, email=email)
 
-    return render_template('account.html', )
+@routes_blueprint.route('/cancel_booking', methods=['POST'])
+@login_required
+def cancel_booking():
+    booking_id = request.form.get('booking_id')
+    booking = hotel_bookings.query.get(booking_id)
+    payment = payments.query.get(booking_id)
+    if booking and payment:
+        db.session.delete(booking)
+        db.session.delete(payment)
+        db.session.commit()
+        flash('Booking cancelled successfully.', 'success')
+    else:
+        flash('Booking not found.', 'error')
+
+    return redirect(url_for('routes.account'))
 
 @routes_blueprint.route('/logout')
 @login_required
@@ -119,3 +171,17 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for('routes.index'))
+
+@routes_blueprint.route('/delete_account', methods=['POST'])
+@login_required
+def delete_account():
+    if booking := hotel_bookings.query.filter_by(user_id=current_user.user_id).first():
+        flash('Please cancel all your bookings before deleting your account.', 'error')
+        return redirect(url_for('routes.account'))
+
+    else:
+        user = current_user
+        db.session.delete(user)
+        db.session.commit()
+        flash('Account deleted successfully.', 'success')
+        return redirect(url_for('routes.index'))

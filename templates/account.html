@@ -3,5 +3,36 @@
 {% block title %}Account{% endblock %}
 
 {% block content %}
+<h2>Bookings</h2>
+<h2>{{ email }}</h2>
+{% if bookings %}
+{% for booking in bookings %}
+<div class="container mt-1">
 
+    <div class="card mb-1">
+        </div>
+        <div class="card-body">
+            <ul class="mb-1">
+                <form action="{{ url_for('routes.cancel_booking') }}" method="POST">
+                    <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
+                    <li><strong>Booking ID:</strong> {{ booking.booking_id }}</li>
+                    <li><strong>Room Number :</strong> {{ booking.room_number }}</li>
+                    <li><strong>Booking Date:</strong> {{ booking.booking_date }}</li>
+                    <li><strong>Arrival Date:</strong> {{ booking.check_in_date }}</li>
+                    <li><strong>Departure Date:</strong> {{ booking.check_out_date }}</li>
+                    <li><strong>Adults:</strong> {{ booking.adults }}</li>
+                    <li><strong>Children:</strong> {{ booking.children }}</li>
+                    <li><strong>Needs:</strong> {{ booking.needs }}</li>
+                    <li><strong>Price:</strong> {{ booking.price }}</li>
+                    <button type="submit">Cancel Booking</button>
+                </form>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<form action="{{ url_for('routes.delete_account') }}" method="POST">
+    <button type="submit">Delete Account</button>
+</form>
 {% endblock %}

@@ -4,9 +4,31 @@
 
 {% block content %}
 
-<form method="POST">
-    {{ form.hidden_tag() }}
-    {{ render_form(form) }}
-</form>
+<div class="container mt-5">
+    <h2>Search for Available Rooms</h2>
+    <form method="POST" action="{{ url_for('routes.book_room') }}">
+        <div class="mb-3">
+            <label for="check_in_date" class="form-label">Check-in Date</label>
+            <input type="date" class="form-control" id="check_in_date" name="check_in_date" required>
+        </div>
+        <div class="mb-3">
+            <label for="check_out_date" class="form-label">Check-out Date</label>
+            <input type="date" class="form-control" id="check_out_date" name="check_out_date" required>
+        </div>
+        <div class="mb-3">
+            <label for="adults" class="form-label">Number of Adults</label>
+            <input type="number" class="form-control" id="adults" name="adults" min="1" required>
+        </div>
+        <div class="mb-3">
+            <label for="children" class="form-label">Number of Children</label>
+            <input type="number" class="form-control" id="children" name="children" min="0" required>
+        </div>
+        <div class="mb-3">
+            <label for="needs" class="form-label">Special Needs (optional)</label>
+            <textarea class="form-control" id="needs" name="needs"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
 
 {% endblock %}
