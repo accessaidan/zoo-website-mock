@@ -17,14 +17,13 @@
                         <strong>Capacity:</strong> {{ room.capacity }}<br>
                         <strong>Price per Night:</strong> ${{ room.price_per_night }}
                     </p>
-                    <form method="POST" action="{{ url_for('routes.book_room') }}">
-                        <input type="hidden" name="room_id" value="{{ room.room_id }}">
+                    <form method="POST" action="{{ url_for('routes.book_room', room_id=room.room_id) }}">
                         <input type="hidden" name="check_in_date" value="{{ check_in_date }}">
                         <input type="hidden" name="check_out_date" value="{{ check_out_date }}">
                         <input type="hidden" name="adults" value="{{ adults }}">
                         <input type="hidden" name="children" value="{{ children }}">
                         <input type="hidden" name="needs" value="{{ needs }}">
-                        <button type="submit" class="btn btn-primary">Reserve</button>
+                        <button type="submit" class="btn btn-primary" action = "{{ url_for('routes.book_room', room_id=room.room_id) }}">Reserve</button>
                     </form>
                 </div>
             </div>

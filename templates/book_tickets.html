@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Tickets{% endblock %}
+
+{% block content %}
+
+<form   method="POST" action="{{ url_for('routes.tickets_booking') }}">
+
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+        {{ form.children.label(class="form-label") }}
+        {{ form.children(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.adults.label(class="form-label") }}
+        {{ form.adults(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.seniors.label(class="form-label") }}
+        {{ form.seniors(class="form-control") }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">Purchase Tickets</button>
+
+{% endblock %}

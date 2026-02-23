@@ -39,6 +39,12 @@ class RoomSearch(FlaskForm):
     needs = StringField('Special Needs / Requests')
     submit = SubmitField('Find Rooms')
 
+class TicketPurchaseForm(FlaskForm):
+    children = StringField('Number of Children', validators=[DataRequired()])
+    adults = StringField('Number of Adults', validators=[DataRequired()])
+    seniors = StringField('Number of Seniors', validators=[DataRequired()])
+    submit = SubmitField('Purchase Tickets')
+
 class PaymentForm(FlaskForm):
     full_name = StringField('Full Name', validators=[DataRequired()])
     card_number = StringField('Card Number', validators=[DataRequired(), Length(min=16, max=16)])

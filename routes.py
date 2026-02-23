@@ -3,7 +3,6 @@ from flask_login import LoginManager, login_user, login_required, current_user, 
 from flask import flash, redirect, url_for
 import datetime
 from datetime import date
-import uuid
 
 
 from forms import *
@@ -70,11 +69,9 @@ def Roomsearch():
 
     return render_template('Roomsearch.html', form=form)
 
-@routes_blueprint.route('/book_room', methods=['POST'])
-def book_room():
-    room_id = request.form.get('room_id')
+@routes_blueprint.route('/book_room/<int:room_id>', methods=['POST'])
+def book_room(room_id):
     room_num = rooms.query.get(room_id).number
-    print(room_num)
     booking_date = date.today()
     check_in_date = datetime.datetime.strptime(request.form.get('check_in_date'), '%Y-%m-%d').date()
     check_out_date = datetime.datetime.strptime(request.form.get('check_out_date'), '%Y-%m-%d').date()
@@ -95,16 +92,16 @@ def book_room():
         'price': price
         
     }
-    return redirect(url_for('routes.payment', booking_details=session['booking_details']))
+    return redirect(url_for('routes.room_payment', booking_details=session['booking_details']))
 
 @routes_blueprint.route('/payment', methods=['GET', 'POST'])
 @login_required
-def payment():
+def room_payment():
     form = PaymentForm()
     if form.validate_on_submit():
         flash('Payment successful! Your booking is confirmed.', 'success')
 
-        # Clear the session
+
         new_booking = hotel_bookings(
             user_id=current_user.user_id,
             room_id=session['booking_details']['room_id'],
@@ -139,7 +136,61 @@ def payment():
         session.pop('booking_details', None)
 
         return redirect(url_for('routes.index'))
-    return render_template('payment.html', form=form, booking_details=session.get('booking_details'))
+    return render_template('room_payment.html', form=form, booking_details=session.get('booking_details'))
+
+@routes_blueprint.route('/tickets', methods=['GET', 'POST'])
+@login_required
+def tickets_booking():
+    form = TicketPurchaseForm()
+    if form.validate_on_submit():
+        children = int(form.children.data)
+        adults = int(form.adults.data)
+        seniors = int(form.seniors.data)
+
+        print(children, adults, seniors)
+        # Calculate total price based on ticket prices
+        child_price = ticket_prices.query.first().child_price
+        adult_price = ticket_prices.query.first().adult_price
+        senior_price = ticket_prices.query.first().senior_price
+        total_price = (children * child_price) + (adults * adult_price) + (seniors * senior_price)
+
+        session['ticket_details'] = {
+            'children': children,
+            'adults': adults,
+            'seniors': seniors,
+            'total_price': total_price
+        }
+
+        print("Ticket details stored in session:")
+        print(session['ticket_details'])
+
+        return redirect(url_for('routes.ticket_payment', ticket_details=session['ticket_details']))
+
+    return render_template('book_tickets.html', form=form)
+
+@routes_blueprint.route('/ticket_payment', methods=['GET', 'POST'])
+@login_required
+def ticket_payment():
+    form = PaymentForm()
+    if form.validate_on_submit():
+        flash('Payment successful! Your tickets are confirmed.', 'success')
+
+        new_ticket = tickets(
+            user_id=current_user.user_id,
+            children=session['ticket_details']['children'],
+            adults=session['ticket_details']['adults'],
+            seniors=session['ticket_details']['seniors'],
+            child_price=ticket_prices.query.first().child_price,
+            adult_price=ticket_prices.query.first().adult_price,
+            senior_price=ticket_prices.query.first().senior_price
+        )
+        db.session.add(new_ticket)
+        db.session.commit()
+        flash('Tickets purchased successfully!', 'success')
+
+
+        return redirect(url_for('routes.index'))
+    return render_template('tickets_payment.html', form=form, ticket_details=session.get('ticket_details'))
 
 
 @routes_blueprint.route('/account')
@@ -147,7 +198,8 @@ def payment():
 def account():
     email = current_user.email
     user_bookings = hotel_bookings.query.filter_by(user_id=current_user.user_id).all()
-    return render_template('account.html', bookings=user_bookings, email=email)
+    user_tickets = tickets.query.filter_by(user_id=current_user.user_id).all()
+    return render_template('account.html', bookings=user_bookings, email=email, tickets=user_tickets)
 
 @routes_blueprint.route('/cancel_booking', methods=['POST'])
 @login_required
@@ -165,7 +217,21 @@ def cancel_booking():
 
     return redirect(url_for('routes.account'))
 
-@routes_blueprint.route('/logout')
+@routes_blueprint.route('/cancel_ticket', methods=['POST'])
+@login_required
+def cancel_ticket():
+    ticket_id = request.form.get('ticket_id')
+    ticket = tickets.query.get(ticket_id)
+    if ticket:
+        db.session.delete(ticket)
+        db.session.commit()
+        flash('Ticket cancelled successfully.', 'success')
+    else:
+        flash('Ticket not found.', 'error')
+
+    return redirect(url_for('routes.account'))
+
+@routes_blueprint.route('/logout', methods=['POST'])
 @login_required
 def logout():
     logout_user()

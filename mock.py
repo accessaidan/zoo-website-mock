@@ -31,6 +31,7 @@ with app.app_context():
     db.create_all()
     populate_rooms()
     make_admins()
+    populate_ticket_prices()
 
 
 app.register_blueprint(routes_blueprint)

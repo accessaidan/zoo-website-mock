@@ -12,17 +12,13 @@
 
     <div class="card mb-3">
         <div class="card-header">
-            <h5 class="mb-0">Booking Summary</h5>
+            <h5 class="mb-0">Ticket Summary</h5>
         </div>
         <div class="card-body">
-            <p><strong>Room:</strong> {{ booking_details.room_num }}</p>
-            <p><strong>Booking Date:</strong> {{ booking_details.booking_date }}</p>
-            <p><strong>Arrival Date:</strong> {{ booking_details.check_in_date }}</p>
-            <p><strong>Departure Date:</strong> {{ booking_details.check_out_date }}</p>
-            <p><strong>Adults:</strong> {{ booking_details.adults }}</p>
-            <p><strong>Children:</strong> {{ booking_details.children }}</p>
-            <p><strong>Needs:</strong> {{ booking_details.needs }}</p>
-            <p><strong>Price:</strong> {{ booking_details.price }}</p>
+            <p><strong>Adults:</strong> {{ ticket_details.adults }}</p>
+            <p><strong>Children:</strong> {{ ticket_details.children }}</p>
+            <p><strong>Seniors:</strong> {{ ticket_details.seniors }}</p>
+            <p><strong>Total Price: £</strong> {{ ticket_details.total_price }}</p>
         </div>
     </div>
 

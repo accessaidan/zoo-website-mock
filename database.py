@@ -1,4 +1,3 @@
-
 #from flask import Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
@@ -21,12 +20,15 @@ class User(db.Model, UserMixin):
 
 class tickets(db.Model):
     ticket_id = db.Column(db.Integer, primary_key=True)
-    children = db.Column(db.Float, nullable=False)
-    adults = db.Column(db.Float, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    children = db.Column(db.Integer, nullable=False)
+    adults = db.Column(db.Integer, nullable=False)
+    seniors = db.Column(db.Integer, nullable=False)
     is_used = db.Column(db.Boolean, default=False)
-    type = db.Column(db.String(50), nullable=False)
     child_price = db.Column(db.Float, nullable=False)
     adult_price = db.Column(db.Float, nullable=False)
+    senior_price = db.Column(db.Float, nullable=False)
+    # No custom __init__ method!
 
 class payments(db.Model):
     payment_id = db.Column(db.Integer, primary_key=True)
@@ -56,6 +58,11 @@ class rooms(db.Model):
     price_per_night = db.Column(db.Float, nullable=False)
     availability = db.Column(db.Boolean, default=True)
 
+class ticket_prices(db.Model):
+    price_id = db.Column(db.Integer, primary_key=True)
+    child_price = db.Column(db.Float, nullable=False)
+    adult_price = db.Column(db.Float, nullable=False)
+    senior_price = db.Column(db.Float, nullable=False)
 
 
 def populate_rooms():
@@ -101,3 +108,13 @@ def make_admins():
         db.session.add(admin_user)
 
     db.session.commit()
+
+def populate_ticket_prices():
+    if ticket_prices.query.first() is None:
+        default_prices = ticket_prices(
+            child_price=10.0,
+            adult_price=20.0,
+            senior_price=15.0
+        )
+        db.session.add(default_prices)
+        db.session.commit()
