@@ -3,6 +3,7 @@ from flask_login import LoginManager, login_user, login_required, current_user, 
 from flask import flash, redirect, url_for
 import datetime
 from datetime import date
+from flask_bcrypt import Bcrypt
 
 
 from forms import *
@@ -26,9 +27,13 @@ def register():
         if existing_user:
             flash('Email already registered. Please log in.', 'error')
             return redirect(url_for('routes.register'))
+
+        hashed_password = Bcrypt().generate_password_hash(form.password.data).decode('utf-8')
+
+        
         new_user = User(
             email=form.email.data,
-            password=form.password.data,
+            password=hashed_password,
             send_email=form.send_email.data
         )
         db.session.add(new_user)
@@ -57,13 +62,52 @@ def login():
 def Roomsearch():
     form = RoomSearch()
     if request.method == 'POST':
-        check_in_date = datetime.datetime.strptime(form.check_in_date.data, '%Y-%m-%d').date()
-        check_out_date = datetime.datetime.strptime(form.check_out_date.data, '%Y-%m-%d').date()
+        try:
+            check_in_date = datetime.datetime.strptime(form.check_in_date.data, '%Y-%m-%d').date()
+            check_out_date = datetime.datetime.strptime(form.check_out_date.data, '%Y-%m-%d').date()
+        
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'error')
+            return render_template('Roomsearch.html', form=form)
         adults = int(form.adults.data)
         children = int(form.children.data)
         needs = form.needs.data
 
+        if check_in_date >= check_out_date:
+            flash('Check-out date must be after check-in date.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if check_in_date < date.today():
+            flash('Check-in date cannot be in the past.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if adults < 1:
+            flash('At least one adult must be included in the booking.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if adults + children > 4:
+            flash('The maximum number of guests per room is 4.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if needs and len(needs) > 200:
+            flash('Special needs/requests must be 200 characters or fewer.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if check_in_date > date.today() + datetime.timedelta(days=365):
+            flash('Check-in date cannot be more than one year in the future.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+        if check_out_date - check_in_date > datetime.timedelta(days=14):
+            flash('The maximum stay is 14 days.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
+
         available_rooms = get_available_rooms(check_in_date, check_out_date, adults + children)
+
+        if not available_rooms:
+            flash('No rooms available for the selected dates and number of guests.', 'error')
+            return render_template('Roomsearch.html', form=form)
+        
 
         return render_template('available_rooms.html', rooms=available_rooms, check_in_date=check_in_date, check_out_date=check_out_date, adults=adults, children=children, needs=needs)
 
@@ -146,6 +190,7 @@ def tickets_booking():
         children = int(form.children.data)
         adults = int(form.adults.data)
         seniors = int(form.seniors.data)
+
 
         print(children, adults, seniors)
         # Calculate total price based on ticket prices

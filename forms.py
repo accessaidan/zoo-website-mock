@@ -34,15 +34,15 @@ class LoginForm(FlaskForm):
 class RoomSearch(FlaskForm):
     check_in_date = StringField('Check-in Date (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
     check_out_date = StringField('Check-out Date (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
-    adults = StringField('Number of Adults', validators=[DataRequired()])
-    children = StringField('Number of Children', validators=[DataRequired()])
+    adults = StringField('Number of Adults', validators=[DataRequired(), Regexp(r'^\d+$', message='Please enter a valid number.')])
+    children = StringField('Number of Children', validators=[DataRequired(), Regexp(r'^\d+$', message='Please enter a valid number.')])
     needs = StringField('Special Needs / Requests')
     submit = SubmitField('Find Rooms')
 
 class TicketPurchaseForm(FlaskForm):
-    children = StringField('Number of Children', validators=[DataRequired()])
-    adults = StringField('Number of Adults', validators=[DataRequired()])
-    seniors = StringField('Number of Seniors', validators=[DataRequired()])
+    children = StringField('Number of Children', validators=[DataRequired(), Regexp(r'^\d+$', message='Please enter a valid number.')])
+    adults = StringField('Number of Adults', validators=[DataRequired(), Regexp(r'^\d+$', message='Please enter a valid number.')])
+    seniors = StringField('Number of Seniors', validators=[DataRequired(), Regexp(r'^\d+$', message='Please enter a valid number.')])
     submit = SubmitField('Purchase Tickets')
 
 class PaymentForm(FlaskForm):
