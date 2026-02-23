@@ -4,6 +4,8 @@ from flask import flash, redirect, url_for
 import datetime
 from datetime import date
 from flask_bcrypt import Bcrypt
+from flask_admin import Admin, AdminIndexView, expose
+from flask_admin.contrib.sqla import ModelView
 
 
 from forms import *
@@ -30,7 +32,7 @@ def register():
 
         hashed_password = Bcrypt().generate_password_hash(form.password.data).decode('utf-8')
 
-        
+
         new_user = User(
             email=form.email.data,
             password=hashed_password,
@@ -49,7 +51,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(email=form.email.data).first()
-        if user:
+        if user and Bcrypt().check_password_hash(user.password, form.password.data):
             login_user(user, remember=form.remember_me.data)
             flash('Login successful!', 'success')
             return redirect(url_for('routes.index'))
@@ -296,3 +298,41 @@ def delete_account():
         db.session.commit()
         flash('Account deleted successfully.', 'success')
         return redirect(url_for('routes.index'))
+
+@routes_blueprint.route('/admin')
+@login_required
+def admin_panel():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+    return render_template('admin_panel.html')
+
+@routes_blueprint.route('/create_admin_user', methods=['POST', 'GET'])
+@login_required
+def create_admin_user():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        existing_user = User.query.filter_by(email=form.email.data).first()
+        
+        if existing_user:
+            flash('Email already registered. Please log in.', 'error')
+            return redirect(url_for('routes.register_admin'))
+
+        hashed_password = Bcrypt().generate_password_hash(form.password.data).decode('utf-8')
+
+        new_user = User(
+            email=form.email.data,
+            password=hashed_password,
+            send_email=form.send_email.data,
+            is_admin=True
+        )
+        db.session.add(new_user)
+        db.session.commit()
+        flash('Admin user created successfully!')
+        return redirect(url_for('routes.admin_panel'))
+    return render_template('register_admin.html', form=form)
+

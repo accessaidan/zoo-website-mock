@@ -1,10 +1,11 @@
 #from flask import Blueprint
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
+from flask_bcrypt import Bcrypt
 
 
 db = SQLAlchemy()
-
+bcrypt = Bcrypt()
 
 
 class User(db.Model, UserMixin):
@@ -104,7 +105,7 @@ def get_available_rooms(check_in_date, check_out_date, visitors):
 
 def make_admins():
     if User.query.filter_by(is_admin=True).first() is None:
-        admin_user = User(email='admin@example.com', password='admin', is_admin=True)
+        admin_user = User(email='admin@example.com', password=Bcrypt().generate_password_hash('admin').decode('utf-8'), is_admin=True)
         db.session.add(admin_user)
 
     db.session.commit()

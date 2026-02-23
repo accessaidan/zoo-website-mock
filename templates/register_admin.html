@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Register Admin{% endblock %}
+
+{% block content %}
+<h1>Create Admin User</h1>
+<form method = "Post">
+    {{ form.hidden_tag() }}
+    {{ render_form(form) }}
+</form>
+{% endblock %}
