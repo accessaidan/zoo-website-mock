@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Room Availability{% endblock %}
+
+{% block content %}
+
+<h1>Edit Room availability</h1>
+<h5>Manage the availability of rooms in the hotel</h5>
+
+<div class="container mt-5">
+    <form method="POST" action="{{ url_for('routes.edit_room_availability') }}">
+        <div class="mb-3">
+            <label for="room_number" class="form-label">Room Number</label>
+            <input type="text" class="form-control" id="room_number" name="room_number" required>
+        <div class="mb-3">
+            <label for="blocked_from" class="form-label">Blocked From</label>
+            <input type="date" class="form-control" id="blocked_from" name="blocked_from" required>
+        </div>
+        <div class="mb-3">
+            <label for="blocked_to" class="form-label">Blocked To</label>
+            <input type="date" class="form-control" id="blocked_to" name="blocked_to" required>
+        </div>
+                <button type="submit" class="btn btn-primary">Update</button>
+    </form>
+</div>
+{% endblock %}

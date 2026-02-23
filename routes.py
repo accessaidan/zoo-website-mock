@@ -231,6 +231,8 @@ def ticket_payment():
             adult_price=ticket_prices.query.first().adult_price,
             senior_price=ticket_prices.query.first().senior_price
         )
+
+
         db.session.add(new_ticket)
         db.session.commit()
         flash('Tickets purchased successfully!', 'success')
@@ -336,3 +338,73 @@ def create_admin_user():
         return redirect(url_for('routes.admin_panel'))
     return render_template('register_admin.html', form=form)
 
+@routes_blueprint.route('/room_availability')
+@login_required
+def room_availability():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+    form = EditAvailabilityForm()
+    return render_template('room_availability.html', form=form)
+
+@routes_blueprint.route('/edit_room_availability', methods=['POST', 'GET'])
+@login_required
+def edit_room_availability():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+
+    
+    form = EditAvailabilityForm()
+    if form.validate_on_submit():
+        print("Form data received:")
+        # Process the form data
+        room_number = form.room_number.data
+        blocked_from = form.blocked_from.data
+        blocked_to = form.blocked_to.data
+
+        try:
+            blocked_from = datetime.datetime.strptime(form.blocked_from.data, '%Y-%m-%d').date()
+            blocked_to = datetime.datetime.strptime(form.blocked_to.data, '%Y-%m-%d').date()
+
+        except ValueError:
+            flash('Invalid date format. Please use YYYY-MM-DD.', 'error')
+            return render_template('room_availability.html', form=form)
+
+        if blocked_from >= blocked_to:
+            flash('Blocked to date must be after blocked from date.', 'error')
+            return render_template('room_availability.html', form=form)
+
+        if blocked_from < date.today():
+            flash('Blocked from date cannot be in the past.', 'error')
+            return render_template('room_availability.html', form=form)
+
+        if not can_block_room(room_number, blocked_from, blocked_to):
+            flash('Room is already booked for the selected dates.', 'error')
+            return render_template('room_availability.html', form=form)
+
+        room = rooms.query.filter_by(number=room_number).first()
+        if not room:
+            flash('Room not found.', 'error')
+            return render_template('room_availability.html', form=form)
+        
+        new_block = hotel_bookings(
+            user_id=current_user.user_id,
+            room_id=room.id,
+            room_number=room.number,
+            booking_date=datetime.datetime.now(),
+            check_in_date=blocked_from,
+            check_out_date=blocked_to,
+            adults=1,
+            children=0,
+            needs='',
+            price=0
+        )
+
+        db.session.add(new_block)
+        db.session.commit()
+
+        flash(f'Room {room_number} blocked from {blocked_from} to {blocked_to}.', 'success')
+
+
+    return render_template('room_availability.html', form=form)

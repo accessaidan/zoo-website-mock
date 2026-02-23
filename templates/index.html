@@ -3,6 +3,12 @@
 {% block title %}Home{% endblock %}
 
 {% block content %}
+{% if current_user.is_admin
+ %}
+    <div class="alert alert-info" role="alert">
+        You are logged in as an admin. <a href="{{ url_for('routes.admin_panel') }}" class="alert-link">You may not place any bookings or buy tickets using this account</a>.
+    </div>
+{% endif %}
 <h1>Welcome to the Zoo</h1>
 <p>Explore our collection of animals and learn more about their habitats.</p>
 {% endblock %}

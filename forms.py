@@ -56,4 +56,8 @@ class PaymentForm(FlaskForm):
         if not field.data.isdigit():
             raise ValidationError('Card number must contain only digits.')
 
-    
+class EditAvailabilityForm(FlaskForm):
+    room_number = StringField('Room Number', validators=[DataRequired()])
+    blocked_from = StringField('Blocked From (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    blocked_to = StringField('Blocked To (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
+    submit = SubmitField('Update Availability')

@@ -99,9 +99,15 @@ def get_available_rooms(check_in_date, check_out_date, visitors):
         available_rooms = rooms.query.filter(
             rooms.capacity >= visitors
         ).all()
-
-
     return available_rooms
+
+def can_block_room(room_number, blocked_from, blocked_to):
+    overlapping_booking = hotel_bookings.query.filter(
+        hotel_bookings.room_number == room_number,
+        hotel_bookings.check_in_date < blocked_to,
+        hotel_bookings.check_out_date > blocked_from
+    ).first()
+    return overlapping_booking is None
 
 def make_admins():
     if User.query.filter_by(is_admin=True).first() is None:
