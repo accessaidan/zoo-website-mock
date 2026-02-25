@@ -167,12 +167,16 @@ def room_payment():
         card_number = form.card_number.data
         card_holder_name = form.full_name.data
         expiry_date = form.expiry_date.data
-        cvv = form.cvv.data
+        
+        hashed_card_number = Bcrypt().generate_password_hash(card_number).decode('utf-8')
+        hashed_card_holder_name = Bcrypt().generate_password_hash(card_holder_name).decode('utf-8')
+        hashed_expiry_date = Bcrypt().generate_password_hash(expiry_date).decode('utf-8')
+
 
         new_payment = payments(
-            card_number=card_number,
-            card_holder_name=card_holder_name,
-            expiry_date=expiry_date,
+            card_number=hashed_card_number,
+            card_holder_name=hashed_card_holder_name,
+            expiry_date=hashed_expiry_date,
             booking_id=new_booking.booking_id
         )
 
@@ -241,10 +245,14 @@ def ticket_payment():
         card_holder_name = form.full_name.data
         expiry_date = form.expiry_date.data
 
+        hashed_card_number = Bcrypt().generate_password_hash(card_number).decode('utf-8')
+        hashed_card_holder_name = Bcrypt().generate_password_hash(card_holder_name).decode('utf-8')
+        hashed_expiry_date = Bcrypt().generate_password_hash(expiry_date).decode('utf-8')
+
         new_payment = payments(
-            card_number=card_number,
-            card_holder_name=card_holder_name,
-            expiry_date=expiry_date,
+            card_number=hashed_card_number,
+            card_holder_name=hashed_card_holder_name,
+            expiry_date=hashed_expiry_date,
             ticket_id=new_ticket.ticket_id
         )
 
