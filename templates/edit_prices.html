@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Prices{% endblock %}
+
+{% block content %}
+
+<h2>Edit Prices</h2>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    <div>{{ form.child_price.label }}     {{ form.child_price() }}    current price: £{{ current_prices['child_price'] }}</div>
+    <div>{{ form.adult_price.label }}     {{ form.adult_price() }}    current price: £{{ current_prices['adult_price'] }}</div>
+    <div>{{ form.senior_price.label }}    {{ form.senior_price() }}   current price: £{{ current_prices['senior_price'] }}</div>
+    <div> {{ form.room_101_price.label }} {{ form.room_101_price() }} current price: £{{ current_prices['room_101_price'] }} </div>
+    <div> {{ form.room_102_price.label }} {{ form.room_102_price() }} current price: £{{ current_prices['room_102_price'] }} </div>
+    <div> {{ form.room_103_price.label }} {{ form.room_103_price() }} current price: £{{ current_prices['room_103_price'] }} </div>
+    <div> {{ form.room_201_price.label }} {{ form.room_201_price() }} current price: £{{ current_prices['room_201_price'] }} </div>
+    <div> {{ form.room_202_price.label }} {{ form.room_202_price() }} current price: £{{ current_prices['room_202_price'] }} </div>
+    <div> {{ form.room_203_price.label }} {{ form.room_203_price() }} current price: £{{ current_prices['room_203_price'] }} </div>
+    <div> {{ form.room_301_price.label }} {{ form.room_301_price() }} current price: £{{ current_prices['room_301_price'] }} </div>
+    <div> {{ form.room_302_price.label }} {{ form.room_302_price() }} current price: £{{ current_prices['room_302_price'] }} </div>
+    <div> {{ form.room_303_price.label }} {{ form.room_303_price() }} current price: £{{ current_prices['room_303_price'] }} </div>
+    <div>
+        <input type="submit" value="Update Prices">
+    </div>
+</form>
+
+{% endblock %}

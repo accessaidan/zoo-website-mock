@@ -437,3 +437,91 @@ def edit_room_availability():
 
 
     return render_template('room_availability.html', form=form)
+
+@routes_blueprint.route('/edit_prices', methods=['POST', 'GET'])
+@login_required
+def edit_prices():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+
+    form = EditPricesForm()
+
+
+
+    session['current_prices'] = {
+        'child_price': ticket_prices.query.first().child_price,
+        'adult_price': ticket_prices.query.first().adult_price,
+        'senior_price': ticket_prices.query.first().senior_price,
+        'room_101_price': rooms.query.filter_by(number=101).first().price_per_night,
+        'room_102_price': rooms.query.filter_by(number=102).first().price_per_night,
+        'room_103_price': rooms.query.filter_by(number=103).first().price_per_night,
+        'room_201_price': rooms.query.filter_by(number=201).first().price_per_night,
+        'room_202_price': rooms.query.filter_by(number=202).first().price_per_night,
+        'room_203_price': rooms.query.filter_by(number=203).first().price_per_night,
+        'room_301_price': rooms.query.filter_by(number=301).first().price_per_night,
+        'room_302_price': rooms.query.filter_by(number=302).first().price_per_night,
+        'room_303_price': rooms.query.filter_by(number=303).first().price_per_night    
+        }
+    
+    print(session['current_prices'])
+    
+    if form.validate_on_submit():
+        child_price = float(form.child_price.data)
+        adult_price = float(form.adult_price.data)
+        senior_price = float(form.senior_price.data)
+
+        room_101_price = float(form.room_101_price.data)
+        room_102_price = float(form.room_102_price.data)
+        room_103_price = float(form.room_103_price.data)
+        room_201_price = float(form.room_201_price.data)
+        room_202_price = float(form.room_202_price.data)
+        room_203_price = float(form.room_203_price.data)
+        room_301_price = float(form.room_301_price.data)
+        room_302_price = float(form.room_302_price.data)
+        room_303_price = float(form.room_303_price.data)
+
+        
+
+        
+
+        current_ticket_prices = ticket_prices.query.first()
+        db.session.delete(current_ticket_prices)
+        new_ticket_prices = ticket_prices(
+            child_price=child_price,
+            adult_price=adult_price,
+            senior_price=senior_price
+        )
+        db.session.add(new_ticket_prices)
+
+
+        room_101 = rooms.query.filter_by(number=101).first()
+        room_101.price_per_night = room_101_price
+        room_102 = rooms.query.filter_by(number=102).first()
+        room_102.price_per_night = room_102_price
+        room_103 = rooms.query.filter_by(number=103).first()
+        room_103.price_per_night = room_103_price
+        room_201 = rooms.query.filter_by(number=201).first()
+        room_201.price_per_night = room_201_price
+        room_202 = rooms.query.filter_by(number=202).first()
+        room_202.price_per_night = room_202_price
+        room_203 = rooms.query.filter_by(number=203).first()
+        room_203.price_per_night = room_203_price
+        room_301 = rooms.query.filter_by(number=301).first()
+        room_301.price_per_night = room_301_price
+        room_302 = rooms.query.filter_by(number=302).first()
+        room_302.price_per_night = room_302_price
+        room_303 = rooms.query.filter_by(number=303).first()
+        room_303.price_per_night = room_303_price
+
+        db.session.commit()
+        flash('Room prices updated successfully.', 'success')
+
+
+    else:
+        print("Form validation failed:")
+        print(form.errors)
+
+    db.session.commit()
+
+    return render_template('edit_prices.html', form=form, current_prices=session.get('current_prices', {})) 

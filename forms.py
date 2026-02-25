@@ -61,3 +61,20 @@ class EditAvailabilityForm(FlaskForm):
     blocked_from = StringField('Blocked From (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
     blocked_to = StringField('Blocked To (DD/MM/YYYY)', validators=[DataRequired()], render_kw={"placeholder": "DD/MM/YYYY"})
     submit = SubmitField('Update Availability')
+
+class EditPricesForm(FlaskForm):
+    child_price = StringField('Child Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    adult_price = StringField('Adult Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    senior_price = StringField('Senior Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+
+    room_101_price = StringField('Room 101 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_102_price = StringField('Room 102 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_103_price = StringField('Room 103 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_201_price = StringField('Room 201 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_202_price = StringField('Room 202 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_203_price = StringField('Room 203 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_301_price = StringField('Room 301 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_302_price = StringField('Room 302 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_303_price = StringField('Room 303 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+
+    submit = SubmitField('Update Prices')
