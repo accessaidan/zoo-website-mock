@@ -370,8 +370,7 @@ def room_availability():
     if not current_user.is_admin:
         flash('Access denied. Admins only.', 'error')
         return redirect(url_for('routes.index'))
-    form = EditAvailabilityForm()
-    return render_template('room_availability.html', form=form)
+    return render_template('room_availability.html')
 
 @routes_blueprint.route('/edit_room_availability', methods=['POST', 'GET'])
 @login_required
@@ -431,6 +430,10 @@ def edit_room_availability():
         db.session.commit()
 
         flash(f'Room {room_number} blocked from {blocked_from} to {blocked_to}.', 'success')
+    
+    else:
+        print("Form validation failed:")
+        print(form.errors)
 
 
     return render_template('room_availability.html', form=form)
