@@ -237,6 +237,21 @@ def ticket_payment():
         db.session.commit()
         flash('Tickets purchased successfully!', 'success')
 
+        card_number = form.card_number.data
+        card_holder_name = form.full_name.data
+        expiry_date = form.expiry_date.data
+
+        new_payment = payments(
+            card_number=card_number,
+            card_holder_name=card_holder_name,
+            expiry_date=expiry_date,
+            ticket_id=new_ticket.ticket_id
+        )
+
+        db.session.add(new_payment)
+        db.session.commit()
+
+        session.pop('ticket_details', None)
 
         return redirect(url_for('routes.index'))
     return render_template('tickets_payment.html', form=form, ticket_details=session.get('ticket_details'))
@@ -255,7 +270,7 @@ def account():
 def cancel_booking():
     booking_id = request.form.get('booking_id')
     booking = hotel_bookings.query.get(booking_id)
-    payment = payments.query.get(booking_id)
+    payment = payments.query.filter_by(booking_id=booking_id).first()
     if booking and payment:
         db.session.delete(booking)
         db.session.delete(payment)
@@ -271,8 +286,11 @@ def cancel_booking():
 def cancel_ticket():
     ticket_id = request.form.get('ticket_id')
     ticket = tickets.query.get(ticket_id)
+    payment = payments.query.filter_by(ticket_id=ticket_id).first()
     if ticket:
         db.session.delete(ticket)
+        db.session.delete(payment)
+
         db.session.commit()
         flash('Ticket cancelled successfully.', 'success')
     else:

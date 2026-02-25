@@ -36,7 +36,8 @@ class payments(db.Model):
     card_number = db.Column(db.String(20), nullable=False)
     card_holder_name = db.Column(db.String(100), nullable=False)
     expiry_date = db.Column(db.String(10), nullable=False)
-    booking_id = db.Column(db.Integer, db.ForeignKey('hotel_bookings.booking_id'), nullable=False)
+    booking_id = db.Column(db.Integer, db.ForeignKey('hotel_bookings.booking_id'), nullable=True)
+    ticket_id = db.Column(db.Integer, db.ForeignKey('tickets.ticket_id'), nullable=True)
 
 class hotel_bookings(db.Model):
     booking_id = db.Column(db.Integer, primary_key=True)
