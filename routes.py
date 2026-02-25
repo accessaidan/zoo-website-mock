@@ -57,6 +57,7 @@ def login():
             return redirect(url_for('routes.index'))
         else:
             flash('Invalid email or password.', 'error')
+            flash('If you have forgotten your password, please contact support to reset it.', 'info')
     return render_template('login.html', form=form)
 
 @routes_blueprint.route('/Roomsearch', methods=['GET', 'POST'])
@@ -465,23 +466,57 @@ def edit_prices():
         }
     
     print(session['current_prices'])
-    
+
     if form.validate_on_submit():
-        child_price = float(form.child_price.data)
-        adult_price = float(form.adult_price.data)
-        senior_price = float(form.senior_price.data)
+        try: 
+            child_price = float(form.child_price.data)
+        except ValueError:
+            child_price = ticket_prices.query.first().child_price
+        try:
+            adult_price = float(form.adult_price.data)
+        except ValueError:
+            adult_price = ticket_prices.query.first().adult_price
+        try:
+            senior_price = float(form.senior_price.data)
+        except ValueError:
+            senior_price = ticket_prices.query.first().senior_price
 
-        room_101_price = float(form.room_101_price.data)
-        room_102_price = float(form.room_102_price.data)
-        room_103_price = float(form.room_103_price.data)
-        room_201_price = float(form.room_201_price.data)
-        room_202_price = float(form.room_202_price.data)
-        room_203_price = float(form.room_203_price.data)
-        room_301_price = float(form.room_301_price.data)
-        room_302_price = float(form.room_302_price.data)
-        room_303_price = float(form.room_303_price.data)
-
-        
+        try:
+            room_101_price = float(form.room_101_price.data)
+        except ValueError:
+            room_101_price = rooms.query.filter_by(number=101).first().price_per_night
+        try:
+            room_102_price = float(form.room_102_price.data)
+        except ValueError:
+            room_102_price = rooms.query.filter_by(number=102).first().price_per_night
+        try:
+            room_103_price = float(form.room_103_price.data)
+        except ValueError:
+            room_103_price = rooms.query.filter_by(number=103).first().price_per_night
+        try:
+            room_201_price = float(form.room_201_price.data)
+        except ValueError:
+            room_201_price = rooms.query.filter_by(number=201).first().price_per_night
+        try:
+            room_202_price = float(form.room_202_price.data)
+        except ValueError:
+            room_202_price = rooms.query.filter_by(number=202).first().price_per_night
+        try:
+            room_203_price = float(form.room_203_price.data)
+        except ValueError:
+            room_203_price = rooms.query.filter_by(number=203).first().price_per_night
+        try:
+            room_301_price = float(form.room_301_price.data)
+        except ValueError:
+            room_301_price = rooms.query.filter_by(number=301).first().price_per_night
+        try:
+            room_302_price = float(form.room_302_price.data)
+        except ValueError:
+            room_302_price = rooms.query.filter_by(number=302).first().price_per_night
+        try:
+            room_303_price = float(form.room_303_price.data)
+        except ValueError:
+            room_303_price = rooms.query.filter_by(number=303).first().price_per_night
 
         
 
@@ -525,3 +560,25 @@ def edit_prices():
     db.session.commit()
 
     return render_template('edit_prices.html', form=form, current_prices=session.get('current_prices', {})) 
+
+@routes_blueprint.route('/reset_user_password', methods=['POST', 'GET'])
+@login_required
+def reset_user_password():
+    if not current_user.is_admin:
+        flash('Access denied. Admins only.', 'error')
+        return redirect(url_for('routes.index'))
+
+    form = ResetUserPasswordForm()
+    if form.validate_on_submit():
+        user = User.query.filter_by(email=form.email.data).first()
+        if user:
+            new_password = form.new_password.data
+            new_password_hashed = Bcrypt().generate_password_hash(new_password).decode('utf-8')
+            user.password = new_password_hashed
+            db.session.commit()
+            flash('Password reset successfully.', 'success')
+            return redirect(url_for('routes.index'))
+        else:
+            flash('User not found.', 'error')
+
+    return render_template('reset_user_password.html', form=form)

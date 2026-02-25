@@ -63,18 +63,30 @@ class EditAvailabilityForm(FlaskForm):
     submit = SubmitField('Update Availability')
 
 class EditPricesForm(FlaskForm):
-    child_price = StringField('Child Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    adult_price = StringField('Adult Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    senior_price = StringField('Senior Ticket Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    child_price = StringField('Child Ticket Price', validators=[ Regexp(r'^\d+(\.\d{1,2})?$')])
+    adult_price = StringField('Adult Ticket Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    senior_price = StringField('Senior Ticket Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
 
-    room_101_price = StringField('Room 101 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_102_price = StringField('Room 102 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_103_price = StringField('Room 103 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_201_price = StringField('Room 201 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_202_price = StringField('Room 202 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_203_price = StringField('Room 203 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_301_price = StringField('Room 301 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_302_price = StringField('Room 302 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
-    room_303_price = StringField('Room 303 Price', validators=[DataRequired(), Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_101_price = StringField('Room 101 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_102_price = StringField('Room 102 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_103_price = StringField('Room 103 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_201_price = StringField('Room 201 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_202_price = StringField('Room 202 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_203_price = StringField('Room 203 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_301_price = StringField('Room 301 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_302_price = StringField('Room 302 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
+    room_303_price = StringField('Room 303 Price', validators=[Regexp(r'^\d+(\.\d{1,2})?$')])
 
     submit = SubmitField('Update Prices')
+
+class ResetUserPasswordForm(FlaskForm):
+    email = StringField('User Email', validators=[DataRequired(), Email()])
+    new_password = PasswordField('New Password', validators=[
+        DataRequired(),
+        Length(min=8, message='Password should be at least 8 characters long.'),
+        Regexp(r'^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$', message='Password must contain letters and numbers.')])
+    confirm_new_password = PasswordField('Confirm New Password', validators=[
+        DataRequired(),
+        EqualTo('new_password', message='Passwords must match.')
+    ])
+    submit = SubmitField('Reset Password')
