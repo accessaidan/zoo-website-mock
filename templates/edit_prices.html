@@ -7,6 +7,7 @@
 <h2>Edit Prices</h2>
 
 <form method="POST">
+    {{ form.hidden_tag() }}
     <div>{{ form.child_price.label }}     {{ form.child_price() }}    current price: £{{ current_prices['child_price'] }}</div>
     <div>{{ form.adult_price.label }}     {{ form.adult_price() }}    current price: £{{ current_prices['adult_price'] }}</div>
     <div>{{ form.senior_price.label }}    {{ form.senior_price() }}   current price: £{{ current_prices['senior_price'] }}</div>
