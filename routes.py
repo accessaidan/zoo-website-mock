@@ -416,7 +416,7 @@ def edit_room_availability():
         
         new_block = hotel_bookings(
             user_id=current_user.user_id,
-            room_id=room.id,
+            room_id=room.room_id,
             room_number=room.number,
             booking_date=datetime.datetime.now(),
             check_in_date=blocked_from,

@@ -6,7 +6,12 @@
 <h2>{{ email }}</h2>
 
 {% if bookings %}
-<h2>Your Bookings</h2>
+{% if current_user.is_admin %}
+    <h2>Your Blocks</h2>
+{% endif %}
+{% if not current_user.is_admin %}
+    <h2>Your Bookings</h2>
+{% endif %}
 {% for booking in bookings %}
 <div class="container mt-1">
     <div class="card mb-1">
@@ -16,7 +21,7 @@
                     <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
                     
                 <li><strong>Booking ID:</strong> {{ booking.booking_id }}</li>
-                <li><strong>Room Number:</strong> {{ booking.room_num }}</li>
+                <li><strong>Room Number:</strong> {{ booking.room_number }}</li>
                 <li><strong>Booking Date:</strong> {{ booking.booking_date }}</li>
                 <li><strong>Arrival Date:</strong> {{ booking.check_in_date }}</li>
                 <li><strong>Departure Date:</strong> {{ booking.check_out_date }}</li>

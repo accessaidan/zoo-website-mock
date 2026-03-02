@@ -9,6 +9,7 @@
 
 <div class="container mt-5">
     <form method="POST" action="{{ url_for('routes.edit_room_availability') }}">
+        {{ form.hidden_tag() }}
         <div class="mb-3">
             <label for="room_number" class="form-label">Room Number</label>
             <input type="text" class="form-control" id="room_number" name="room_number" required>
