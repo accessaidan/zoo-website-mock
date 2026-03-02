@@ -9,6 +9,26 @@
         You are logged in as an admin. <a href="{{ url_for('routes.admin_panel') }}" class="alert-link">You may not place any bookings or buy tickets using this account</a>.
     </div>
 {% endif %}
-<h1>Welcome to the Zoo</h1>
-<p>Explore our collection of animals and learn more about their habitats.</p>
+
+
+<div id = "demo" class = "carousel slide" data-bs-ride="carousel">
+  <div class = "carousel-inner">
+    <div class = "carousel-item active">
+      <img src = "{{ url_for('static', filename='carousel1.png') }}" class = "carousel-img" alt = "Image 1">
+    </div>
+    <div class = "carousel-item">
+        <img src = "{{ url_for('static', filename='carousel2.png') }}" class = "carousel-img" alt = "Image 2">
+    </div>
+    <div class = "carousel-item">
+        <img src = "{{ url_for('static', filename='carousel3.png') }}" class = "carousel-img" alt = "Image 3">
+    </div>
+    </div>
+    <button class = "carousel-control-prev" type = "button" data-bs-target = "#demo" data-bs-slide = "prev">
+      <span class = "carousel-control-prev-icon"></span>
+    </button>
+    <button class = "carousel-control-next" type = "button" data-bs-target ="#demo" data-bs-slide = "next">
+        <span class = "carousel-control-next-icon"></span>
+    </button>
+</div>
+
 {% endblock %}

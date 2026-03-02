@@ -13,10 +13,10 @@
     <h2>Your Bookings</h2>
 {% endif %}
 {% for booking in bookings %}
-<div class="container mt-1">
-    <div class="card mb-1">
+<div class="container mt-2">
+    <div class="card mb-3">
         <div class="card-body">
-            <ul class="mb-1">
+            <ul class="mb-3">
                 <form action="{{ url_for('routes.cancel_booking') }}" method="POST">
                     <input type="hidden" name="booking_id" value="{{ booking.booking_id }}">
                     

@@ -15,7 +15,9 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">Ridget Zoo Adventures</a>
+    <a class="navbar-brand" href="/">
+      <img src="{{ url_for('static', filename='logo.png') }}"alt="Hotel Logo" height="70px" width="100px" class="d-inline-block align-text-top">
+    </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -60,5 +62,17 @@
   {% endwith %}
 {% block content %}{% endblock %}
   {{ bootstrap.load_js() }}    
+
+  <style>
+    .carousel-item img {
+        margin: 20px auto;
+        display: block;
+        border-radius: 16px;
+    }
+
+    .carousel {
+      padding: 20px;
+    }
+  </style>
 </body>
 </html>
