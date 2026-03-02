@@ -35,6 +35,9 @@
         <li class="nav-item">
           <a class="nav-link" href="/tickets">Tickets</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/education">Education</a>
+        </li>
         {% if current_user.is_admin %}
         <li class="nav-item">
           <a class="nav-link" href="/admin">Admin Panel</a>
@@ -63,16 +66,7 @@
 {% block content %}{% endblock %}
   {{ bootstrap.load_js() }}    
 
-  <style>
-    .carousel-item img {
-        margin: 20px auto;
-        display: block;
-        border-radius: 16px;
-    }
 
-    .carousel {
-      padding: 20px;
-    }
   </style>
 </body>
 </html>

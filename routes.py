@@ -266,6 +266,10 @@ def ticket_payment():
     return render_template('tickets_payment.html', form=form, ticket_details=session.get('ticket_details'))
 
 
+@routes_blueprint.route('/education')
+def education():
+    return render_template('education.html')
+
 @routes_blueprint.route('/account')
 @login_required
 def account():
