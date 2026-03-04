@@ -18,7 +18,7 @@ routes_blueprint = Blueprint('routes', __name__)
 
 def index():
 
-    return render_template('index.html')
+    return render_template('index.html', ticket_prices=ticket_prices.query.first())
 
 @routes_blueprint.route('/register', methods=['GET', 'POST'])
 def register():
@@ -198,8 +198,18 @@ def tickets_booking():
         adults = int(form.adults.data)
         seniors = int(form.seniors.data)
 
-
-        print(children, adults, seniors)
+        if children > 0 and adults == 0 and seniors == 0:
+            flash('Children must be accompanied by at least one adult or senior.', 'error')
+            return render_template('book_tickets.html', form=form)
+        
+        if children + adults + seniors == 0:
+            flash('Please select at least one ticket to purchase.', 'error')
+            return render_template('book_tickets.html', form=form)
+        
+        if children + adults + seniors > 10:
+            flash('You cannot purchase more than 10 tickets at once.', 'error')
+            return render_template('book_tickets.html', form=form)
+        
         # Calculate total price based on ticket prices
         child_price = ticket_prices.query.first().child_price
         adult_price = ticket_prices.query.first().adult_price
